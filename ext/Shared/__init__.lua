@@ -143,8 +143,14 @@ Events:Subscribe('Partition:Loaded', function(p_Partition)
 	local s_Instances = p_Partition.instances
 
 	for _, l_Instance in pairs(s_Instances) do
-		if l_Instance == nil or type(l_Instance) == 'number' or l_Instance.typeInfo == nil or l_Instance.Is == nil then
-			print('Instance is null?')
+		if l_Instance == nil then
+			print('Instance is nil?')
+		elseif type(l_Instance) == 'number' then
+			print('Instance is number?')
+		elseif l_Instance.typeInfo == nil then
+			print('Instance typeInfo is nil?')
+		elseif l_Instance.Is == nil then
+			print('Instance.Is is nil?')
 		else
 			if(l_Instance:Is("LevelData")) then
 				local s_Instance = LevelData(l_Instance)
