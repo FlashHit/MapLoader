@@ -143,33 +143,30 @@ Events:Subscribe('Partition:Loaded', function(p_Partition)
 	local s_Instances = p_Partition.instances
 
 	for _, l_Instance in pairs(s_Instances) do
-		if l_Instance == nil then
+		if l_Instance == nil or type(l_Instance) == 'number' or l_Instance.typeInfo == nil or l_Instance.Is == nil then
 			print('Instance is null?')
-			break
-		end
-		if(l_Instance:Is("Blueprint")) then
-			--print("-------"..Blueprint(l_Instance).name)
-		end
-		if(l_Instance.typeInfo.name == "LevelData") then
-			local s_Instance = LevelData(l_Instance)
-			if(s_Instance.name == SharedUtils:GetLevelName()) then
-				print("Primary level")
-				s_Instance:MakeWritable()
-				PrimaryLevel = s_Instance
-				if(SharedUtils:IsClientModule()) then
-					NetEvents:Send('MapLoader:GetLevel')
+		else
+			if(l_Instance:Is("LevelData")) then
+				local s_Instance = LevelData(l_Instance)
+				if(s_Instance.name == SharedUtils:GetLevelName()) then
+					print("Primary level")
+					s_Instance:MakeWritable()
+					PrimaryLevel = s_Instance
+					if(SharedUtils:IsClientModule()) then
+						NetEvents:Send('MapLoader:GetLevel')
+					end
 				end
-			end
-		elseif l_Instance:Is('ObjectVariation') then
-			-- Store all variations in a map.
-			local variation = ObjectVariation(l_Instance)
-			objectVariations[variation.nameHash] = variation
-			if pendingVariations[variation.nameHash] ~= nil then
-				for _, object in pairs(pendingVariations[variation.nameHash]) do
-					object.objectVariation = variation
-				end
+			elseif l_Instance:Is("ObjectVariation") then
+				-- Store all variations in a map.
+				local variation = ObjectVariation(l_Instance)
+				objectVariations[variation.nameHash] = variation
+				if pendingVariations[variation.nameHash] ~= nil then
+					for _, object in pairs(pendingVariations[variation.nameHash]) do
+						object.objectVariation = variation
+					end
 
-				pendingVariations[variation.nameHash] = nil
+					pendingVariations[variation.nameHash] = nil
+				end
 			end
 		end
 	end
